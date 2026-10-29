@@ -1,10 +1,10 @@
 # FastAPI Product Management Practice
 
-A learning project for practicing FastAPI backend development while following a
-YouTube lecture. It includes a React inventory interface adapted from an
-AI-backend project so it can be used as a visual companion to the API work.
+A hands-on project demonstrating FastAPI backend development through a
+PostgreSQL-backed product management API. It includes a React inventory
+interface adapted from an AI-backend project as a visual companion to the API.
 
-This is a work in progress intended for learning and demonstration, not a
+This project is intended for learning and demonstration, not a
 production-ready application.
 
 ## What this project covers
@@ -18,6 +18,7 @@ production-ready application.
 - A React interface for viewing, searching, sorting, adding, editing, and
   deleting products
 - FastAPI's interactive API documentation
+- CORS configuration for the local React development server
 
 ## Technology
 
@@ -85,8 +86,7 @@ sample products if the table is empty. The PostgreSQL database itself must
 already exist and be reachable. Product routes now read from and write to
 PostgreSQL, so committed changes survive application restarts.
 
-Use `/docs` to exercise the backend independently while frontend integration
-is still in progress.
+Use `/docs` to exercise the backend independently of the React interface.
 
 ### 3. Start the frontend
 
@@ -98,28 +98,32 @@ npm install
 npm start
 ```
 
-The React development server will open in your browser. The frontend's Axios
+The React development server normally opens at <http://localhost:3000>. The frontend's Axios
 client currently targets `http://localhost:8000` directly. Although a development
-proxy is also configured, these absolute requests do not use it. See the
-integration limitations below before testing through the UI.
+proxy is also configured, these absolute requests do not use it. The backend
+allows cross-origin requests from `http://localhost:3000`; if the frontend runs
+on a different port or hostname, update the allowed origin accordingly.
 
 ## Backend routes currently implemented
 
 | Method | Route | Purpose |
 | --- | --- | --- |
 | `GET` | `/` | Return a greeting |
-| `GET` | `/item` | List products |
-| `GET` | `/item/{id}` | Find a product by ID |
-| `POST` | `/item` | Add a product |
-| `PUT` | `/item?id={id}` | Update a product's name, description, price, and quantity |
-| `DELETE` | `/item?id={id}` | Delete a product |
+| `GET` | `/products` | List products |
+| `GET` | `/products/{id}` | Find a product by ID |
+| `POST` | `/products` | Add a product |
+| `PUT` | `/products/{id}` | Update a product's name, description, price, and quantity |
+| `DELETE` | `/products/{id}` | Delete a product |
 
 Product data uses the fields `id`, `name`, `description`, `price`, and
 `quantity`.
 
 `POST` and `PUT` accept a JSON body with all five fields. For updates, the
-query parameter selects the existing product; its ID is not changed by the
+path parameter selects the existing product; its ID is not changed by the
 body's `id` value.
+
+The frontend uses `/products/` for list and create requests. FastAPI's default
+trailing-slash redirects forward these requests to `/products`.
 
 Example request body:
 
@@ -140,18 +144,15 @@ Example request body:
   and closes it after the request.
 - Added database commits for product creation, updates, and deletion.
 - Retained the sample list only for seeding an empty products table.
+- Aligned backend product routes with the React interface, including ID-based
+  paths for updates and deletion.
+- Enabled CORS for the React development server at `http://localhost:3000`.
 
 ## Current development notes
 
-- The React interface was taken/adapted from an AI-backend project; the
-  FastAPI backend is being developed by following a YouTube lecture.
-- The frontend currently requests `/products/` and
-  `/products/{id}`, while this backend currently provides `/item` routes.
-  Update and delete request shapes also differ. The two parts therefore need
-  API route alignment before the UI can work end-to-end.
-- The backend does not currently configure CORS. The frontend's direct API
-  requests from a different origin also require CORS configuration or a change
-  to relative requests through the development proxy.
+- The primary learning focus is the FastAPI backend, database integration, and
+  connecting API operations to a React interface. The frontend is adapted from
+  an AI-backend project rather than presented as an original UI implementation.
 - Missing products currently return text messages rather than HTTP 404
   responses. Database error handling and validation beyond the basic Pydantic
   field types remain areas for improvement.
