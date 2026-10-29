@@ -1,0 +1,27 @@
+# Environment variables
+.env
+
+# Virtual environment
+.venv/
+myenvfastapipractice/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE configs
+.vscode/
+.idea/
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/build/
+frontend/coverage/
+
+# Logs
+*.log
